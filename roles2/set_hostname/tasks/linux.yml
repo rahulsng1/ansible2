@@ -1,0 +1,23 @@
+---
+
+- name: Set Hostname
+  action: hostname
+    name='{{hn.stdout}}'
+
+- name: Set Hostname on RHEL7+
+  shell: echo {{hn.stdout}} > /etc/hostname
+  when: ansible_distribution_major_version  > '6'
+
+
+- name: Set Hostname 3
+  shell: hostname {{hn.stdout}}
+
+- name: fix hosts file
+  action: lineinfile
+    dest=/etc/hosts
+    regexp='{{hn.stdout}}'
+    line='127.0.0.1 {{hn.stdout}} {{hn.stdout}}.localdomain'
+    state=present
+
+
+
