@@ -10,13 +10,15 @@ dependencies:
   - role: hosts_file
   - role: set_hostname
   - role: ssh_tunnel
-  - { role: remove_rh_gui, when: ansible_os_family | lower == 'redhat' }
+  - role: remove_rh_gui
+    when: ansible_os_family | lower == 'redhat' 
   - role: disable_services
   - role: ntp
   - role: syslog
   - role: nimsoft
   - role: evault
   - role: exim
-  - { role: firewalld_standard, when: ansible_distribution_major_version > "6" }
+  - role: firewalld_standard
+    when: ansible_distribution_major_version > "6" 
   - role: zabbix
 
