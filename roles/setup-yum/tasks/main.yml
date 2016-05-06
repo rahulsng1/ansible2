@@ -1,0 +1,15 @@
+---
+
+- block:
+  - include: common.yml 
+  - include: redhat.yml 
+    tags: rhn_reg
+
+  when: "ansible_distribution | lower  == 'redhat' and {{done_setup_yum|default(0)}} < 1"
+  tags:
+    - proxy
+    - setup_yum
+    
+- set_fact: done_setup_yum=1
+
+
