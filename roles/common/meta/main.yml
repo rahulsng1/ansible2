@@ -4,7 +4,6 @@ dependencies:
   - role: update_os
   - role: sudo
   - role: static_routes
-  - role: unix_groups
   - role: unix_users
   - role: clean_repos
   - role: hosts_file
@@ -21,4 +20,6 @@ dependencies:
   - role: firewalld_standard
     when: ansible_distribution_major_version > "6" 
   - role: zabbix
+
+
 

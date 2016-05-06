@@ -4,13 +4,16 @@
 #- include: setup-RedHat.yml
 #  when: ansible_os_family == 'RedHat'
 
-  - name: Add static routes
-    action: template
-      src=nic-static-routes.j2 
-      dest=/etc/sysconfig/network-scripts/route-{{item}} 
-      owner=root 
-      group=root 
-      mode=0644
-    when: nic_static_routes|length
-    tags: static-routes
-    with_items: "{{nics}}"
+- name: Add static routes
+  action: template
+    src=nic-static-routes.j2 
+    dest=/etc/sysconfig/network-scripts/route-{{item}} 
+    owner=root 
+    group=root 
+    mode=0644
+  when: nic_static_routes|length
+  tags: static-routes
+  with_items: "{{nics}}"
+
+- set_fact: done_static_routes=1
+

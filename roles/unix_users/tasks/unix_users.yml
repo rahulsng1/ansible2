@@ -1,0 +1,58 @@
+---
+- debug: msg="start of {{role_path|basename}} role"
+  tags: always
+
+- name: work out home
+  shell:  cd .. ;  pwd  
+  register: hd
+  tags: uusers
+
+- name: Setup users groups
+  action: group name={{item.key}} state=present
+  with_dict: "{{grps}}"
+  tags: uusers
+
+- name: add user
+  action: user name={{ item.value.name }} state=present group={{item.value.group}} append=yes password={{item.value.password}} groups={{item.value.groups}} comment="{{item.value.comment}}" home={{ hd.stdout }}/{{ item.value.name }} 
+  with_dict: "{{users}}"
+  ignore_errors: yes
+  tags: uusers
+
+
+- name: create .ssh
+  action: file path={{ hd.stdout }}/{{ item.value.name }}/.ssh state=directory owner={{ item.value.name }} mode=0700
+  with_dict: "{{users}}"
+  tags: uusers
+
+- name: push keys
+  action: copy src={{ item.value.name }}.keys dest={{ hd.stdout }}/{{ item.value.name }}/.ssh/authorized_keys owner={{ item.value.name }} group={{item.value.group}} mode=0600
+  with_dict: "{{users}}"
+  tags: uusers
+
+- name: get users on system  
+  action: getent
+    database=passwd
+  no_log: True
+
+- name: we need at so make sure its there
+  action: yum
+    name=at
+    state=present
+
+- name: lock ansible account in a bit
+  action: at
+    count=4 
+    units="hours"
+    command="/usr/bin/passwd -l ansible"
+  ignore_errors: yes
+  tags: 
+    - uusers
+    - ansible_lock
+  when: "'ansible' in getent_passwd"
+
+
+- debug: msg="THE ANSIBLE ACCOUNT WILL BE LOCKED IN 4 HOURS"
+  when: "'ansible' in getent_passwd"
+
+- set_fact: done_setup_yum=1
+

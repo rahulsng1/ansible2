@@ -4,5 +4,6 @@
 
 
   - include: setup-RedHat.yml
-    when:  ansible_os_family | lower  == 'redhat'
+    when: " ansible_os_family | lower  == 'redhat' and {{done_static_routes|default(0)}} < 1"
+
 
