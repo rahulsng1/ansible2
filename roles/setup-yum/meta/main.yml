@@ -1,0 +1,6 @@
+---
+dependencies:
+
+  - role: packages_via_proxy
+  - role: clean_repos
+    

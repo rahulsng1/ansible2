@@ -1,0 +1,18 @@
+---
+# Some hosts are dbs but wont be in the oracle group, so here will 
+# will automagically put them in thee Oracle group at run time
+#
+# 1st we need to make sure all groups exist
+#
+
+
+- hosts: E5DB:EFINDB
+  gather_facts: no
+  tasks:
+    - name: add hosts to Oracle group
+      add_host: name={{item}} groups="Oracle"
+      with_flattened: 
+        - "{{groups.E5DB | default('Ignore_me')}}"
+        - "{{groups.EFINDB | default('Ignore_me') }}"
+
+    - debug: msg="{{groups.Oracle}}"

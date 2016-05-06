@@ -1,0 +1,45 @@
+---
+  - name: add repo keys 
+    action: copy 
+      src={{item}} 
+      dest=/etc/pki/rpm-gpg/
+    with_fileglob:
+      - keys/*
+    tags:
+      - packages
+      - repo
+
+  - name: add repo files
+    action: template 
+      src={{item}} 
+      dest=/etc/yum.repos.d/ 
+      mode=644 
+      owner=root 
+      group=root
+    with_fileglob:
+      - ../templates/*.repo
+    tags:
+      - packages
+      - repo
+
+  - name: import repo keys
+    action: rpm_key 
+      state=present 
+      key=/etc/pki/rpm-gpg/{{item|basename}}
+    with_fileglob:
+      - keys/*
+    tags:
+      - packages
+      - repo
+
+  - name: make sure we are using a proxy
+    action: lineinfile 
+      dest=/etc/yum.conf 
+      regexp="^proxy=" 
+      line="proxy=http://127.0.0.1:{{proxy}}"
+    
+  - name: disable ks repo
+    action: lineinfile dest=/etc/yum.repos.d/cd.repo regexp="^enabled=" line="enabled=0"
+    ignore_errors: yes
+    
+

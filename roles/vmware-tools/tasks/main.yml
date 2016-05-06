@@ -1,0 +1,93 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+
+  - name: we must have dmidecode
+    action: yum 
+      name=dmidecode 
+      state=present
+    tags: vmware
+
+  - name: Are we virtual?
+    shell: /usr/sbin/dmidecode -t 1 | awk '/Manufacturer/ {gsub(/,/,"",$0);print $2}'
+    register: are_we_virtual
+    tags: always
+
+
+  - block:
+    # START RHEL bit
+    - block:
+      # start RHEL < 7 tools install
+      - name: push keys
+        action: copy 
+          src={{item}} 
+          dest=/tmp/
+        with_fileglob: 
+          - ./*.pub
+    
+      - name: import keys
+        action: rpm_key 
+          state=present 
+          key=/tmp/{{item| basename}}
+        with_fileglob: 
+          - ./*.pub
+  
+      - name: install vmware repo
+        action: template 
+          src=vmware.repo 
+          dest=/etc/yum.repos.d/vmware.repo 
+          mode=600 
+          owner=root 
+          group=root
+    
+      - name: install vmware tools as we are < RHEL7
+        action: yum 
+          name=vmware-tools-esx-nox 
+          state=present 
+          update_cache=yes 
+        environment:
+          http_proxy: http://127.0.0.1:{{proxy}}
+        ignore_errors: yes
+      # END RHEL < 7 tools install
+      when: ansible_distribution_major_version  < '7' 
+  
+    - name: install OpenVM tools as we are >= RHEL7+
+      action: yum 
+        name=open-vm-tools 
+        state=present
+      when: ansible_distribution_major_version  > '6' 
+      environment:
+        http_proxy: http://127.0.0.1:{{proxy}}
+      ignore_errors: yes
+  
+  
+    - name: install VMXNET3 driver as we are RHEL 5 and below
+      action: yum 
+        name=kmod-vmware-tools-vmxnet3 
+        state=present
+      when: ansible_distribution_major_version  < '6' 
+      environment:
+        http_proxy: http://127.0.0.1:{{proxy}}
+      ignore_errors: yes
+  
+  
+    - block:
+      # install havenged
+      - name: install haveged on RHEL6+
+        action: yum
+          name=haveged
+          state=latest
+  
+      - name: Start havenged
+        action: service
+          name=haveged
+          state=started
+          enabled=yes
+      # END install havenged
+      when: ansible_distribution_major_version > "5" and ansible_distribution | lower  == 'redhat'
+      tags:
+        - haveged_install
+      # END RHEL install
+    tags: vmware
+    when: are_we_virtual.stdout|lower  ==  'vmware'  and  ansible_os_family | lower  == 'redhat'

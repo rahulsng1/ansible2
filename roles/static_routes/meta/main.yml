@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Aleksandr Kostyrev
+  description: Configures static routes
+  issue_tracker_url: https://github.com/kostyrevaa/ansible-role-static-routes/issues
+  license: BSD
+  min_ansible_version: 1.9
+  platforms:
+  - name: EL
+    versions:
+      - 6
+  galaxy_tags:
+    - network
+    - route
+dependencies: []

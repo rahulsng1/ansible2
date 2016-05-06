@@ -1,0 +1,46 @@
+---
+grps:
+  e5:
+  e5fs:
+  oracle:
+  oinstall:
+  dba:
+users:
+  e5fs:
+    comment: e5fs
+    group: e5
+    groups: e5fs
+    name: e5fs
+    password: $6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE.
+    uid: 511
+    gid: 516
+  oracle:
+    comment: oracle
+    group: oracle
+    groups: dba,oinstall
+    name: oracle
+    password: $6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE.
+    uid: 510
+    gid: 505
+lvs:
+  e5:
+    vg: t1
+    lv: e5
+    size: +100%FREE
+    mount: /e5
+    fs: ext4
+    opts: noatime
+    format: yes
+  home:
+    vg: system
+    lv: home
+    size: 10G
+    mount: /home
+    fs: ext4
+    opts: noatime
+    format: no
+
+
+
+  # needed to get around issue with = in shell commands
+sub_comm: subscription-manager register --force --auto-attach

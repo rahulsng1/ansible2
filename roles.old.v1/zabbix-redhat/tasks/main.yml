@@ -1,0 +1,101 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: Add repo keys
+    action: copy 
+      src={{ item }} 
+      dest=/var/tmp/pkg/ 
+      mode=644 
+      owner=root 
+      group=root
+    with_fileglob:
+      - repofiles/{{ansible_distribution_major_version}}/*.rpm
+    tags: zabbix
+  
+  - name: fix anoying RH proxy rubbish
+    action: lineinfile 
+      dest=/etc/yum.conf 
+      regexp='^proxy=' 
+      line='proxy=http://127.0.0.1:{{proxy}}'   
+      state=present
+    tags: zabbix
+
+  - name: Add repos
+    action: yum 
+      name=/var/tmp/pkg/{{ item  | basename }} 
+      state=present 
+      disable_gpg_check=yes 
+      disablerepo="rhel*"
+    with_fileglob:
+      - repofiles/{{ansible_distribution_major_version}}/*.rpm
+    tags: zabbix
+  
+  - name: install agents
+    action: yum 
+      name={{ item }} 
+      state=latest 
+      disablerepo="rhel*,*Centos*,*epel*"
+    environment:
+      http_proxy: http://127.0.0.1:{{proxy}}
+    with_items:
+      - zabbix-sender
+      - zabbix-get
+      - zabbix-agent
+    tags: zabbix
+    #  - facter
+
+  - name: push new systemd script 
+    action: copy
+      src=zabbix-agent.service 
+      dest=/etc/systemd/system/zabbix-agent.service 
+      mode=755 
+      owner=root 
+      group=root
+    when: ansible_distribution_major_version > "6"
+    tags: zabbix
+
+  - name: Fix sysconfig for RHEL7 derived distros
+    when: ansible_distribution_major_version > "6"
+    action: copy
+      src=prestart.sh 
+      dest=/opt/zabbix/plugins/prestart.sh 
+      mode=755  
+      owner=root 
+      group=root
+    tags: zabbix
+
+  - name: Fix config for RHEL7 derived distros
+    when: ansible_distribution_major_version > "6"
+    action: lineinfile 
+      dest=/etc/zabbix/agentd.conf 
+      regexp='^PidFile=' 
+      line='PidFile=/run/zabbix/zabbix_agentd.pid' 
+      state=present
+    tags: zabbix
+
+  - name: fix firewall on RHEL7+
+    action: service 
+      name=firewalld 
+      state=started 
+      enabled=yes 
+    when: ansible_distribution_major_version > "6"
+    tags: zabbix
+  
+  - name: fix firewall on RHEL7+
+    action: firewalld 
+      permanent=yes 
+      port=10050/tcp 
+      state=enabled 
+      immediate=yes
+    when: ansible_distribution_major_version > "6"
+    tags: zabbix
+
+  - name: start zabbix agent
+    action: service 
+      name=zabbix-agent 
+      state=started 
+      enabled=yes
+    tags:
+      - zabbix
+

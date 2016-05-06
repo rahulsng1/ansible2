@@ -1,0 +1,113 @@
+---
+  - name: push oracle repo files
+    action: template
+      src=oracle.repo 
+      dest=/etc/yum.repos.d/oracle.repo
+
+  - name:  push pgp keys
+    action: copy
+      src=RPM-GPG-KEY-oracle-ol{{ansible_distribution_major_version}} 
+      dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle 
+      owner=root 
+      group=root 
+      mode=640
+
+
+  - name: install oracle depended packages 
+    action: yum
+      name={{item}}
+      state=present 
+    when: "{{ansible_distribution_major_version}} == 7"
+    with_items: "{{oracle_prereq_packages}}"
+  
+  - name: install oracle prereq package
+    action: yum
+      enablerepo=ol_UEKR3,ol_latest
+      name={{item}}
+      state=present 
+      update_cache=yes
+    with_items: "{{oracle12_prereq_packages}}"
+    when: "{{ansible_distribution_major_version}} == 7"
+  
+  - name: install oracle prereq package
+    action: yum
+      enablerepo=ol_UEKR3,ol_latest
+      name={{item}}
+      state=present 
+      update_cache=yes
+    with_items: "{{oracle11_prereq_packages}}"
+    when: "{{ansible_distribution_major_version}} == 6"
+      
+
+  - name: push oracles enviroment - chenage to push tar
+    action: copy 
+      src=oracle_bash_profile 
+      dest=/home/oracle/.bash_profile 
+      owner=oracle 
+      group=oracle 
+      backup=yes 
+      mode=640
+    when: "{{ansible_distribution_major_version}} < 7"
+
+  - name: push oracle init script
+    action: copy 
+      src=dbora 
+      dest=/etc/init.d/dbora 
+      owner=root 
+      group=dba 
+      backup=yes 
+      mode=755
+
+  - name: enable oracle
+    action: service 
+      name=dbora 
+      enabled=yes 
+      state=stopped
+
+  - name: put asm device tweak in
+    action: copy 
+      src=70-persistent-storage.rules 
+      dest=/etc/udev/rules.d/70-persistent-storage.rules 
+      mode=700 
+      owner=root 
+      group=root
+
+  - name: push oracles home dir
+    action: unarchive 
+      src=ora_home.tgz 
+      copy=yes 
+      dest=/
+
+  - name: Clean yum cache as its a disk hog
+    shell: yum --enablerepo="*" clean all
+
+  - name: create oracle dump dir
+    action: file 
+      state=directory 
+      name={{item}}
+      mode=755 
+      owner=oracle 
+      group=oracle
+    tags: 
+      - ora-dump
+    with_items: "{{ora_dirs}}"
+
+  - name: Dump oracle binaries up there
+    action: copy
+      src={{item}} 
+      dest=/u02/software 
+      owner=oracle 
+      group=oracle
+    with_fileglob: ""/local/ansible_files/{{role_path|basename}}/oracle/{{ansible_distribution_major_version}}/*"
+    tags: 
+      - ora-dump
+
+
+  - name: hack the limits so the rubbish oracle installer will actually pass its checks
+    shell: cp /etc/security/limits.conf /etc/security/limits.conf.org ; cat /etc/security/limits.d/oracle* >> /etc/security/limits.conf
+
+
+    # hooks to stop multiple runs on the role across plays
+  - set_fact: ora_pre_done=1
+  - debug: msg="ora_pre_done {{ora_pre_done}}"
+

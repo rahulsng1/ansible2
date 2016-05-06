@@ -1,0 +1,8 @@
+---
+dependencies: 
+  - { role: oracle_user, tags: ora_pre }
+  #  - { role: update_os, tags: ora_pre }
+  - role: disk_layout
+    tags: ora_pre
+    when: "{{disk_layout_done|default(0)}} < 1" 
+  - { role: dba_users, tags: ora_pre }

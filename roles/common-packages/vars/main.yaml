@@ -1,0 +1,80 @@
+---
+  RHEL7_packages:
+    - ntp
+    - open-vm-tools
+    - net-tools
+  RHEL6_packages:
+    - ntp
+  RHEL5_packages:
+    - ntp
+  RHEL_packages:
+    - ntp
+    - openssh-server
+    - sysstat
+    - exim
+    - libXrender
+    - libXp
+    - libXft
+    - libXp
+    - openmotif
+    - elfutils-libelf
+    - libstdc++-devel
+    - gcc-c++
+    - xorg-x11-apps
+    - xauth
+    - libXtst
+    - libstdc++-devel
+    - libaio-devel
+    - telnet
+    - exim
+    - glib2
+    - glibc.i686
+    - glibc-devel
+    - glibc-headers
+    - libgcc
+    - libstdc++
+    - libXxf86misc
+    - nss
+    - nss-softokn
+    - nss-softokn-freebl.i686
+    - gcc
+    - libnl-devel
+    - iptraf
+    - ltrace
+    - gd
+    - graphviz
+    - libXaw
+    - libXmu
+    - libXpm
+    - lm_sensors-libs
+    - net-snmp-libs
+    - libacl.i686
+    - libstdc++.i686
+    - libattr.i686
+    - screen
+    - glibc
+    - libgcc
+    - libstdc++
+    - nss-softokn-freebl
+    - rsync
+    - atop
+    - cfg2html
+    - vim
+    - strace
+    - bind-utils
+    - haveged
+
+
+  
+  RHEL7_packages_remove:
+    - postfix 
+    - sendmail
+  RHEL6_packages_remove:
+    - postfix
+    - sendmail
+  RHEL5_packages_remove:
+    - postfix
+    - sendmail
+  RHEL_packages_remove:
+    - postfix
+    - sendmail

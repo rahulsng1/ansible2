@@ -1,0 +1,22 @@
+---
+- hosts: all
+  gather_facts: yes
+#  sudo: yes
+  #ask-sudo-pass: Truei
+  vars:
+   os_type: RedHat
+   proxy: "{{ lookup('env','ANS_PROXY') }}"
+   rs: "{{ lookup('env','RSYNC_PROXY') }}"
+                
+  roles:
+     - packages_via_proxy
+
+  tasks:
+    - name: patch run
+      sudo: yes
+      action: yum
+        name=*
+        state=latest    
+      tags:
+        - patch
+

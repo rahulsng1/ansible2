@@ -1,0 +1,33 @@
+---
+
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  
+  - name: unpack nimsoft agent
+    action: unarchive 
+      copy=yes 
+      src=/local/ansible_files/{{role_path|basename}}/nim.tgz 
+      dest=/ 
+      group=root 
+      owner=root
+    tags: nimsoft
+
+  - name: push init script
+    action: copy 
+      src=/local/ansible_files/{{role_path|basename}}/nimbus 
+      dest=/etc/rc.d/init.d/nimbus 
+      group=root 
+      owner=root 
+      mode=755
+    tags: nimsoft
+
+  - name: start service
+    action: service 
+      name=nimbus 
+      state=started 
+      enabled=yes
+    tags: nimsoft
+
+
+

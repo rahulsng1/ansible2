@@ -1,0 +1,11 @@
+---
+- hosts: ORACLE
+  gather_facts: yes
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  roles:
+    - ora_pre
+
+

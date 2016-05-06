@@ -1,0 +1,30 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: create LVs
+    lvol: vg={{ item.value.vg }} lv={{ item.value.lv }} size={{ item.value.size }} state=present 
+    with_dict: lvs
+    tags: oracle_disk
+
+  - name: create file systems
+    filesystem: fstype={{ item.value.fs }} dev="/dev/{{ item.value.vg }}/{{ item.value.lv }}"
+    with_dict: lvs
+    tags: oracle_disk
+
+#  - debug: "msg=/dev/{{ item.value.vg }}/{{ item.value.lv }}  "
+#    with_dict: lvs
+#    tags: oracle_disk
+
+
+#  - name: mount file systems
+#    filesystem: fstype={{ item.value.fs }} dev="/dev/{{ item.value.vg }}/{{ item.value.lv }}" 
+#    with_dict: lvs
+#    tags: oracle_disk
+
+  - name: mount file systems
+    mount: fstype={{ item.value.fs }} src="/dev/{{ item.value.vg }}/{{ item.value.lv }}" state=mounted opts={{ item.value.opts }} name={{ item.value.mount }}
+    with_dict: lvs
+    tags: oracle_disk
+
+

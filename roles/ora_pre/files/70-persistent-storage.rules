@@ -1,0 +1,1 @@
+KERNEL=="sd[c-z]*", OWNER="oracle", GROUP="oinstall", MODE="660"

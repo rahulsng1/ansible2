@@ -1,0 +1,14 @@
+---
+  zabbix_files:
+    opt:
+      src: "/opt/zabbix/client_tree/linux/opt/"
+      dst: "/opt/zabbix/"
+    etc:
+      src: "/opt/zabbix/client_tree/linux/etc/zabbix/"
+      dst: "/etc/zabbix/"
+    sys:
+      src: "/opt/zabbix/client_tree/linux/etc/sysconfig/zabbix-agent.7"
+      dst: "/etc/zabbix/zabbix-agent.7"
+    sys2:
+      src: "/opt/zabbix/client_tree/linux/etc/sysconfig/zabbix-agent"
+      dst: "/etc/zabbix/zabbix-agent"

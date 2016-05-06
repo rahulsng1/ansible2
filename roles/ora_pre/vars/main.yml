@@ -1,0 +1,57 @@
+---
+
+    oracle_prereq_packages:
+      - xauth
+      - bind-libs
+      - bind-utils
+      - compat-libcap1
+      #- compat-libstdc++-33
+      - gssproxy
+      - keyutils
+      - ksh
+      - libXi
+      - libXinerama
+      - libXrandr
+      - libXtst
+      - libXv
+      - libXxf86dga
+      - libaio-devel
+      - libbasicobjects
+      - libcollection
+      - libdmx
+      - libevent
+      - libini_config
+      - libnfsidmap
+      - libpath_utils
+      - libref_array
+      - libtalloc
+      - libtevent
+      - libtirpc
+      - libverto-tevent
+      - lm_sensors-libs
+      - mailx
+      - nfs-utils
+      - psmisc
+      - quota
+      - quota-nls
+      - rpcbind
+      - smartmontools
+      - sysstat
+      - tcp_wrappers
+      - xorg-x11-utils
+
+    oracle12_prereq_packages:
+      - oracle-rdbms-server-12cR1-preinstall
+      - elfutils-libelf-devel
+      - tuned-profiles-oracle
+  
+    oracle11_prereq_packages:
+      - oracle-rdbms-server-11gR2-preinstall
+      - elfutils-libelf-devel
+      
+
+    ora_dirs:
+      - /home/oracle/.ssh
+      - /u02/software
+
+

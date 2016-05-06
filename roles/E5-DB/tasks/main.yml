@@ -1,0 +1,20 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: push E5-DB
+    action: unarchive 
+      src=/local/ansible_files/{{role_path|basename}}/E5-DB.tgz 
+      dest=/
+    when: "{{ansible_distribution_major_version}} < 7"
+
+    # in the later db build we use templates
+    # these are all built on RHEL7+
+  - include: templates.yml
+    tags:
+      - ora-templates
+    when: "{{ansible_distribution_major_version}} > 6"
+
+
+
+

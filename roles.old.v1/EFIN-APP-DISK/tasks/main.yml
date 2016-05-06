@@ -1,0 +1,81 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: create LVs
+    action: lvol
+       vg={{ item.value.vg }}
+       lv={{ item.value.lv }}
+       size={{ item.value.size }}
+       state=present 
+    with_dict: "{{lvs}}"
+
+  - name: create file systems
+    action: filesystem
+       fstype={{ item.value.fs }} 
+       dev="/dev/{{ item.value.vg }}/{{ item.value.lv }}"
+    with_dict: "{{lvs}}"
+
+  - group_by: key={{ansible_system}}
+  - debug: "msg=/dev/{{ item.value.vg }}/{{ item.value.lv }}  "
+    with_dict: lvs
+    
+  - name: create mountpoints
+    action: file 
+      path={{item.value.mount}}
+      state=directory
+    with_dict: "{{lvs}}"
+
+  - name: mount file systems
+    action: mount
+       fstype={{ item.value.fs }}
+       src="/dev/{{ item.value.vg }}/{{ item.value.lv }}"
+       state=mounted
+       opts={{ item.value.opts }}
+       name={{ item.value.mount }}
+    with_dict: "{{lvs}}"
+
+#  - name: Setup users groups
+#    group: name={{item.key}} state=present
+#    with_dict: grps
+
+#  - name: add user
+#    user: name={{ item.value.name }} state=present group={{item.value.group}} append=yes password={{item.value.password}} uid={{item.value.uid}} comment="{{item.value.comment}}"  
+#    with_dict: users
+#    ignore_errors: yes
+
+#  - name: push EFIN
+#    unarchive: src=EFIN-APP.tgz dest=/
+#    tags:
+#      - efin-unpack
+
+#  - name: fix ownerships
+#    shell: chown -R {{ item.owner }}:{{item.group}} {{item.path}}
+#    with_items:
+#      - { path: '/cedar/', owner: 'efin', group: 'efin' }
+#      - { path: '/cedar/oracle', owner: 'oracle', group: 'dba' }
+#      - { path: '/cedar/java', owner: 'oracle', group: 'dba' }
+    
+#  - name: install prereq packages
+#    action: yum
+#      state=installed
+#      name={{item}}
+#    tags:
+#      - efin_packages
+#    with_items:
+#      - compat-libcap1
+#      - compat-libstdc++
+#      - compat-libstdc++.i686
+#      - libaio
+#      - libgcc
+#      - libstdc.i686
+
+#      - ksh
+#      - sysstat
+#      - numactl
+#      - numactl-devel
+#      - cups
+#      - vsftpd
+#      - motif
+#      - motif-devel
+

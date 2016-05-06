@@ -1,0 +1,14 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: Setup users groups
+    action: group name={{item}} state=present
+    with_items:
+      - ut
+      - uts
+      - utsb
+      - dba
+    tags: uusers
+  
+

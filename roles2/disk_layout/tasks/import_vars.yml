@@ -1,0 +1,14 @@
+---
+
+# 1st pull in the correct disk layouts for the host
+
+  - include_vars: oracle.yml
+    when: "'Oracle' in group_names"
+
+  - include_vars: efin_app.yml
+    when: "'EFINAPP' in group_names"
+
+  - include_vars: e5_app.yml
+    when: "'E5APP' in group_names"
+
+

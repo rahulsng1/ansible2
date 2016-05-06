@@ -1,0 +1,22 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - debug: msg="System {{ ansible_os_family | lower }}-{{ ansible_virtualization_type | lower }}"
+      tags: always
+    - group_by:
+          key: "{{ansible_os_family | lower }}-{{ ansible_virtualization_type | lower }}"
+      tags: always
+
+
+- hosts: redhat-vmware:redhat-na
+  gather_facts: no
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+
+  roles:
+     - vmware-tools
+
+

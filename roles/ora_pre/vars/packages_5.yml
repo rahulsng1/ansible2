@@ -1,0 +1,4 @@
+---
+  packages: 
+    - "oracle-rdbms-server-11gR2-preinstall,elfutils-libelf-devel"
+

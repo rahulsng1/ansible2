@@ -1,0 +1,28 @@
+---
+
+  - name: create template dir
+    action: file
+      dest=/u02/templates
+      state=directory
+      mode=755
+      owner=oracle
+      group=oinstall
+
+  - name: push oracle E5 templates up
+    action: copy
+      src={{item}}
+      dest=/u02/templates
+      owner=oracle
+      group=oinstall
+      #    when: "{{ansible_distribution_major_version}} > 6"
+    with_fileglob: "/local/ansible_files/{{role_path|basename}}/templates/{{ansible_distribution_major_version}}/{{E5_DB_release}}/*"
+
+  - name: push oracle E5 other software bits up
+    action: copy
+      src={{item}}
+      dest=/u02/software
+      owner=oracle
+      group=oinstall
+    with_fileglob: "/local/ansible_files/{{role_path|basename}}/{{ansible_distribution_major_version}}/*"
+
+

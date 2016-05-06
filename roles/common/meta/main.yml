@@ -1,0 +1,22 @@
+---
+dependencies:
+  - role: disk_layout
+  - role: update_os
+  - role: sudo
+  - role: static_routes
+  - role: unix_groups
+  - role: unix_users
+  - role: clean_repos
+  - role: hosts_file
+  - role: set_hostname
+  - role: ssh_tunnel
+  - { role: remove_rh_gui, when: ansible_os_family | lower == 'redhat' }
+  - role: disable_services
+  - role: ntp
+  - role: syslog
+  - role: nimsoft
+  - role: evault
+  - role: exim
+  - { role: firewalld_standard, when: ansible_distribution_major_version > "6" }
+  - role: zabbix
+

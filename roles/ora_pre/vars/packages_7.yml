@@ -1,0 +1,4 @@
+---
+  packages: 
+    - "oracle-rdbms-server-12cR1-preinstall.x86_64,elfutils-libelf-devel"
+

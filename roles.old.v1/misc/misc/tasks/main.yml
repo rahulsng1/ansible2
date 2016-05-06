@@ -1,0 +1,156 @@
+---
+  - name: fix hosts file
+    action: 
+      lineinfile dest=/etc/hosts 
+      regexp='{{item.a}}\W*{{item.b}}' 
+      line='{{item.a}} {{item.b}}' 
+      state=present 
+    tags: misc
+    with_items:
+      - { a: '10.178.97.100', b: 'abs' }
+      - { a: '192.168.253.5', b: 'GR2A365XMGMTV01' }
+
+  - name: disable kickstart repo
+    action: 
+      lineinfile dest={{item}} 
+      regexp="enabled=" 
+      line="enabled=0" 
+      state=present 
+    tags: misc
+    ignore_errors: True
+    with_items:
+      - /etc/yum.repos.d/oracle.repo
+      - /etc/yum.repos.d/cd.repo
+
+  - name: Get hostname
+    local_action: 
+      shell grep -i {{ ansible_mgmt.ipv4.address }} /etc/hosts|  awk '{print $2}'
+    when: ansible_mgmt.ipv4.address is defined
+    register: hn
+    sudo: no
+    ignore_errors: True
+    tags: misc
+
+  - name: Set Hostname
+    action: 
+      lineinfile dest=/etc/sysconfig/network 
+      regexp='HOSTNAME=' 
+      line='HOSTNAME={{hn.stdout}}' 
+      state=present
+    when: "hn is defined and hn.rc == 0"
+    tags: misc
+  
+  - name: Set Hostname 2
+    shell: echo {{hn.stdout}} > /etc/hostname
+    when: "hn is defined and hn.rc == 0"
+    tags: misc
+  
+  - name: Set Hostname 3
+    shell: hostname {{hn.stdout}} 
+    when: "hn is defined and hn.rc == 0"
+    tags: misc
+
+  - name: fix hosts file
+    action: 
+      lineinfile dest=/etc/hosts 
+      regexp='{{hn.stdout}}' 
+      line='127.0.0.1 {{hn.stdout}} {{hn.stdout}}.localdomain' 
+      state=present
+    when: "hn is defined and hn.rc == 0"
+    tags: misc
+
+  - name: fix cdrepo
+    action:
+      template dest=/etc/yum.repos.d/cd.repo 
+      src=mgmt.repo 
+      mode=643 
+      owner=root 
+      group=root 
+    tags: 
+      - misc
+      - repo
+
+  - name: make sure ssh tunneling allowed
+    action: 
+      lineinfile 
+      dest=/etc/ssh/sshd_config 
+      regexp="^AllowTcpForwarding" 
+      line="AllowTcpForwarding yes" 
+      state=present
+    notify: restart sshd
+    tags: misc
+
+  - name: turn off services not required for VM (mainly hardware daemons)
+    action: 
+      service name={{item}} 
+      state=stopped 
+      enabled=no
+    ignore_errors: yes
+    when: ansible_virtualization_type|lower  ==  'vmware' 
+    tags:
+      - misc
+      - services
+    with_items:
+      - cpuspeed        
+      - haldaemon       
+      - hidd            
+      - kudzu           
+      - microcode_ctl   
+      - readahead_early 
+      - readahead_later 
+      - smartd          
+  
+  - name: turn off services not required 
+    action: 
+      service name={{item}} 
+      state=stopped 
+      enabled=no
+    ignore_errors: yes
+    tags:
+      - misc
+      - services
+    with_items:
+      - mdmonitor
+      - iptables
+      - iptables6
+      - xinetd
+      - autofs
+      - avahi-daemon    
+      - bluetooth       
+      - cups            
+      - gpm             
+      - iscsi           
+      - iscsid          
+      - isdn            
+      - mcstrans        
+      - messagebus      
+      - nfslock         
+      - portmap         
+      - rawdevices      
+      - restorecond     
+      - rpcgssd         
+      - rpcidmapd       
+      - sendmail        
+      - setroubleshoot  
+      - snmpd           
+
+  - name: stop hiding the kernel init at boot grub defaults
+    action: 
+      replace dest=/etc/default/grub 
+      regexp='(GRUB_CMDLINE_LINUX=.*)\s+(quiet|rhgb)(.+)(quiet|rhgb)(.+)' 
+      replace='\1 \3 \5' backup=yes
+    tags:
+      - misc
+      - gboot
+    when: ansible_distribution_major_version > "6" and ansible_os_family | lower == 'redhat'
+  
+  - name: stop hiding the kernel init at boot grub config
+    action: 
+      replace dest=/boot/grub2/grub.cfg
+      regexp='(linux16 .*)\s+(quiet|rhgb)(.+)(quiet|rhgb)(.*)' 
+      replace='\1 \3 \5' backup=yes
+    tags:
+      - misc
+      - gboot
+    when: ansible_distribution_major_version > "6" and ansible_os_family | lower == 'redhat'
+  

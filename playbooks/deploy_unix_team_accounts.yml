@@ -1,0 +1,8 @@
+---
+- hosts: all
+  gather_facts: yes
+  roles:
+    - unix_groups
+    - sudo
+    - unix_users
+

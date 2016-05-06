@@ -1,0 +1,14 @@
+---
+  - include: common.yml 
+    when: ansible_os_family | lower  == "redhat"
+    tags:
+      - proxy
+
+  - include: redhat.yml 
+    when: ansible_distribution | lower  == "redhat"    
+    tags:
+      - proxy
+      - rhn_reg
+    
+
+

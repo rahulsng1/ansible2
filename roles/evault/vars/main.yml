@@ -1,0 +1,5 @@
+---
+  files:
+      - { s: 'agent.tgz', d: '/var/tmp/evault.tgz' }
+      - { s: 'oracle.tgz', d: '/var/tmp/evault-oracle.tgz' }
+      - { s: 'vvagent', d: '/etc/init.d/vvagent' }

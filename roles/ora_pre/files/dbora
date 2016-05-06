@@ -1,0 +1,60 @@
+#!/bin/sh
+# chkconfig: 345 99 20
+# description: Oracle auto start-stop script.
+#
+# Set ORA_HOME to be equivalent to the $ORACLE_HOME
+# from which you wish to execute dbstart and dbshut;
+#
+# Set ORA_OWNER to the user id of the owner of the
+# Oracle database in ORA_HOME.
+
+ORA_OWNER=oracle
+DEFAULT_ORAHOME=/u01/app/oracle/product/11.2.0/dbhome_1
+export DEFAULT_ORAHOME
+
+echo $0 $* >> /var/dbshut.s
+
+
+case "$1" in
+    'start')
+     # Start the Oracle databases:
+        if [ -e $DEFAULT_ORAHOME/bin/dbstart ] ; then
+                su $ORA_OWNER -c "$DEFAULT_ORAHOME/bin/dbstart $DEFAULT_ORAHOME"
+        else
+                echo how can i start whats not there !!!
+        fi
+        ORACLE_HOME=/u01/app/oracle/product/11.2.0/dbhome_1
+        export ORACLE_HOME
+        if [ -e $ORACLE_HOME/bin/lsnrctl ] ; then
+                su $ORA_OWNER -c "$ORACLE_HOME/bin/lsnrctl stop"
+                su $ORA_OWNER -c "$ORACLE_HOME/bin/lsnrctl start LISTENER_E5"
+        else
+                echo how can i start whats not there !!!
+        fi
+
+        if [ -d /var/lock/subsys ] ; then
+          touch /var/lock/subsys/dbora
+        fi
+        #return
+        ;;
+    'stop')
+        touch /var/dbshut
+        # Stop the Oracle databases:
+        if [ -e $DEFAULT_ORAHOME/bin/dbshut ] ; then
+                su $ORA_OWNER -c "$DEFAULT_ORAHOME/bin/dbshut $DEFAULT_ORAHOME"
+        else
+                echo Your Oracle config looks suspect
+                exit 0
+        fi
+        ORACLE_HOME=/u01/app/oracle/product/11.2.0/dbhome_1
+        export ORACLE_HOME
+        if [ -e $ORACLE_HOME/bin/lsnrctl ] ; then
+                su $ORA_OWNER -c "$ORACLE_HOME/bin/lsnrctl stop LISTENER_E5"
+        else
+                echo your listener config is wrong
+        fi
+        [ -e /var/lock/subsys/dbora ]  && rm /var/lock/subsys/dbora
+        ;;
+esac
+
+

@@ -1,0 +1,29 @@
+grps:
+  efin:
+  oracle:
+users:
+  efin:
+    comment: efin
+    group: efin
+    groups: oracle
+    name: efin
+    password: $6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE.
+    uid: 511
+    gid: 516
+  oracle:
+    comment: oracle
+    group: oracle
+    groups: efin
+    name: oracle
+    password: $6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE.
+    uid: 510
+    gid: 505
+lvs:
+  cedar:
+   vg: t1
+   lv: cedar
+   size: +100%FREE
+   mount: /cedar
+   fs: ext4
+   opts: noatime
+

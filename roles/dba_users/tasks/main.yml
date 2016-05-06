@@ -1,0 +1,81 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: work out home
+    shell:  cd .. ;  pwd  
+    register: hd
+    tags:
+      - pre-ora 
+      - dba_user
+      - key_merge
+
+  - name: Setup users groups
+    action: group 
+      name={{item.key}} 
+      state=present
+    with_dict: "{{grps}}"
+    tags:
+      - pre-ora 
+      - dba_user
+
+  - name: add user
+    action: user 
+      name={{ item.value.name }} 
+      state=present group={{item.value.group}} 
+      append=yes 
+      password={{item.value.password}} 
+      groups={{item.value.groups}} 
+      comment="{{item.value.comment}}" 
+      home={{ hd.stdout }}/{{ item.value.name }} 
+    with_dict: "{{users}}"
+    ignore_errors: yes
+    tags:
+      - pre-ora 
+      - dba_user
+
+
+  - name: create .ssh
+    action: file 
+      path={{ hd.stdout }}/{{ item.value.name }}/.ssh 
+      state=directory 
+      owner={{ item.value.name }} 
+      mode=0700
+    with_dict: "{{users}}"
+    tags:
+      - pre-ora 
+      - dba_user
+
+  - name: push keys
+    action: copy 
+      src={{ item.value.name }}.keys 
+      dest={{ hd.stdout }}/{{ item.value.name }}/.ssh/authorized_keys 
+      owner={{ item.value.name }} 
+      group={{item.value.group}} 
+      mode=0600
+    with_dict: "{{users}}"
+    tags:
+      - pre-ora 
+      - dba_user
+
+  - name: merge dba keys into oracles
+    action: shell cat {{ hd.stdout }}/{{ item.value.name }}/.ssh/authorized_keys >> /home/oracle/.ssh/authorized_keys
+    with_dict: "{{users}}"
+    tags:
+      - pre-ora 
+      - dba_user
+      - key_merge
+
+
+  - name: push sudo
+    action: copy 
+      src=sudo_file 
+      dest=/etc/sudoers.d/dba 
+      owner=root 
+      group=root
+      mode=0440
+    tags:
+      - pre-ora 
+      - dba_user
+
+

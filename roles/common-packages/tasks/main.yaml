@@ -1,0 +1,31 @@
+---
+  - name: Strip baddy packages
+    action: yum 
+      name={{item}} 
+      state=absent
+    with_flattened:
+      - RHEL_packages_remove
+      - RHEL7_packages_remove
+    tags:
+      - packages
+    ignore_errors: yes
+  
+  - name: Install goody packages
+    action: yum 
+      name={{item}} 
+      state=present #update_cache=yes
+    with_flattened:     
+      - RHEL_packages
+      - RHEL7_packages
+    tags:
+      - packages
+    ignore_errors: yes
+
+  - name: Update all packages
+    action: yum 
+      name=* 
+      state=latest
+    tags:
+      - packages
+      - update
+  

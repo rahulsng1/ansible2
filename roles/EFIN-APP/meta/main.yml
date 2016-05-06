@@ -1,0 +1,6 @@
+---
+dependencies:
+  - role: disk_layout
+    when: "{{disk_layout_done|default(0)}} < 1" 
+  - role: firewalld_EFINAPP
+  - role: efin_admin

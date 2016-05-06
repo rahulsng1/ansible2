@@ -1,0 +1,54 @@
+---
+  - name: push epel repo files
+    copy: src=epel-release-{{ansible_distribution_major_version}}.rpm dest=/var/tmp backup=yes
+    tags: exim
+
+  - name: install 
+    yum: name=/var/tmp/epel-release-{{ansible_distribution_major_version}}.rpm state=present
+    when: ansible_os_family | lower  == "redhat"
+    tags: exim
+
+  - name: install exim
+    yum: name=exim state=present
+    when: ansible_os_family | lower  == "redhat"
+    tags: exim
+
+  - name: push exim config
+    copy: src=exim.conf dest=/etc/exim/exim.conf backup=yes
+    tags: exim
+  
+  - name: destroy the evil sendmail
+    yum: name=sendmail state=absent
+    when: ansible_os_family | lower  == "redhat"
+    tags: exim
+    ignore_errors: yes
+
+  - name: WARNING IM DISBLING DNS
+    shell: sed -e "s/^nameserver/#&/" -i /etc/resolv.conf
+    tags: exim
+
+  - name: setup hosts
+    lineinfile: dest=/etc/hosts regexp={{item.r}} line='{{item.l}}' create=yes
+    tags: exim
+    with_items:
+      - { r: 'eximmailer\S*$', l: '172.25.97.18 eximmailer' }
+      - { r: 'eximmailer2\S*$', l: '172.24.97.18 eximmailer2' }
+  
+  - name: tweak exim start part1
+    lineinfile: dest=/etc/sysconfig/exim regexp="^DAEMON=" line="DAEMON=yes" create=yes
+    when: ansible_os_family | lower  == "redhat"
+    tags: exim
+  
+  - name: tweak exim start part2
+    lineinfile: dest=/etc/sysconfig/exim regexp="QUEUE=" line="QUEUE=5m" create=yes
+    when: ansible_os_family | lower  == "redhat"
+    tags: exim
+
+  - name: start exim forever
+    service: name=exim state=started enabled=yes
+    when: ansible_os_family | lower  == "redhat"
+    tags: exim
+
+
+
+

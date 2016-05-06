@@ -1,0 +1,29 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: Check for rsyslog.d
+    action: file
+      state=directory
+      path=/etc/rsyslog.d
+      mode=0755 
+
+  - name: Push remote rsyslog config file
+    action: copy 
+      src=remote.conf 
+      dest=/etc/rsyslog.d/remote_syslog.conf 
+      mode=0600 
+      owner=root 
+      group=root
+    when: ansible_os_family | lower  == "redhat"
+
+
+  - name: Define the syslog server in hosts
+    action: lineinfile 
+      dest=/etc/hosts  
+      regexp='^217.68.65.53' 
+      line='217.68.65.53 syslog' 
+      backup=yes

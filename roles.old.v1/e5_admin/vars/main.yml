@@ -1,0 +1,70 @@
+grps:
+  e5_admin: {}
+users:
+  amalik:
+    comment: Arfan Malik
+    group: e5_admin
+    groups: e5_admin
+    name: amalik
+    password: $6$dhGOPwXb$FMfmT7jl6nwK4m77rZYZPUDet4JSvLtwjfM9Xx.03HXS8/ZWWJZB7fhbmoOsjgiVPN598Qfb1dnstlIZruL0U.
+  bblenkinsop:
+    comment: Barbara Blenkinsop
+    group: e5_admin
+    groups: e5_admin
+    name: bblenkinsop
+    password: $6$ET3bi45W$PPAt4AjwxTphGwmO3u9LZHt01wT9ZS63vlUcBnYPOon1RbqcBEtatjjtDmnAlmQ1dKIC8Ky42m.82zVVo9ahE/
+  cprosser:
+    comment: Chris Prosser
+    group: e5_admin
+    groups: e5_admin
+    name: cprosser
+    password: $6$ePdcbX4W$9m/krcpYvky6o9sKZ4B9USb.4/PfyjXdahD/uo7C6EmjfwJ7ToIiQnj2BLe6XhTIZIfUTLO.XuNpDjYKZ37oc/
+  cwardell:
+    comment: Craig Wardell
+    group: e5_admin
+    groups: e5_admin
+    name: cwardell
+    password: $6$YgjxOXPh$DBPEkj1DU/VyeCSNyS4Tu67PGAGZOu5NGn6ObjBFVywEVxQhWkbk3SulCDiB/ZhI86j2wSRJ1YuuJ7ezD1UdW1
+  drobinson:
+    comment: David Robinson
+    group: e5_admin
+    groups: e5_admin
+    name: drobinson
+    password: $6$GxW5ZmC/$9L8.zd/PyAPmjRvQtf8fz8Iq.Q1HECbfEiI/cTgx66/I7Q9efqXFXW0KCy8jqb37rBc2MSG01P7Us3x6NQOGV.
+  dshield:
+    comment: Derek Shield
+    group: e5_admin
+    groups: e5_admin
+    name: dshield
+    password: $6$IM2l2cx8$8kiX1KAUQJzcCb17UYLwXuTDKFfKB5SmXKAUgH2UuOXYSUymm/Caf5Mwxz4rEhL5ACN8LovJSALMBW5Ks8OnI/
+  fthomas:
+    comment: Fred Thomas
+    group: e5_admin
+    groups: e5_admin
+    name: fthomas
+    password: $6$g.U7wroe$E64C3pXIUZ3DI5nqfes4rZ9QHl2CUBwy8ZuOQqErQEQJd/WXMnFXz5NKjHABHvrf/oK4opvsU0/q/ihcaSf6y/
+  gcowell:
+    comment: Gary Cowell
+    group: e5_admin
+    groups: e5_admin
+    name: gcowell
+    password: $6$P5jwvr2O$U9QX7KyUfMfaU/3CIQi2XbmZGVv0HmUTQqc5eK/A7af3G3QrvaUMbtm6KBYLwZBhKFqQTpO6yiHtF.gT0.ZKk/
+  kwinter:
+    comment: Kevin Winter
+    group: e5_admin
+    groups: e5_admin
+    name: kwinter
+    password: $6$RfWae1XF$14tMvK59MuO1iqb7FmtXaDwegbeOok7bBtYktULfHL9cFdt8uVAvwqgJYsSNCG.469qGpM9jisNwnerQ6bFXw/
+  lowen:
+    comment: Linda Owen
+    group: e5_admin
+    groups: e5_admin
+    name: lowen
+    password: $6$Si6TV2Po$AxqkNhjbBJhsqRKFOf5.1CA88.H6ezlXYCXDePCZL4uFUPCvTKRw6HqFxufI6fos37mAWz6bcIf6xzeIeyRvJ0
+  sbell:
+    comment: Stephen Bell
+    group: e5_admin
+    groups: e5_admin
+    name: sbell
+    password: $6$1c6oCz.2$VrAl0xYP2or7N/EWGwD0k7KjX.dSwQenglRUMywvdmwrHb8uxz4oafKxYGumGv/QNujd9teAQEV9hEDDP281p1
+

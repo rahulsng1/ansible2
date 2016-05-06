@@ -1,0 +1,28 @@
+---
+  lvs:
+    u01:
+      vg: t1
+      lv: oracle
+      size: +100%FREE
+      mount: /u01
+      fs: ext4
+      opts: noatime
+    u02:
+      vg: t2
+      lv: oracle
+      size: +100%FREE
+      mount: /u02
+      fs: ext4
+      opts: noatime
+    u03:
+      vg: t1.1
+      lv: oracle
+      size: +100%FREE
+      mount: /u03
+      fs: ext4
+      opts: noatime
+
+
+
+
+

@@ -1,0 +1,13 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - include: ora_pre.yml
+    when: "{{ora_pre_done|default(0)}} < 1"
+    tags: 
+      - ora_pre
+      - ora_pre_only

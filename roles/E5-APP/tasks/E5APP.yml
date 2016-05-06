@@ -1,0 +1,95 @@
+---
+  - name: Setup users groups
+    action: group 
+      name={{item.key}} 
+      state=present
+    with_dict: "{{grps}}"
+
+  - name: add user
+    action: user
+      name={{ item.value.name }} 
+      state=present group={{item.value.group}} 
+      append=yes 
+      password={{item.value.password}} 
+      uid={{item.value.uid}} 
+      comment="{{item.value.comment}}"  
+      groups={{item.value.groups}}
+    with_dict: "{{users}}"
+    ignore_errors: yes
+
+  - name: create some random dirs abs need
+    action: file 
+      path={{item}} 
+      state=directory 
+      mode=0755
+    with_items:
+      - /usr/java
+      - /var/mfaslmf
+
+  - name: push E5
+    action: unarchive
+      src="/local/ansible_files/{{role_path|basename}}/{{item.tar}}"
+      dest={{item.d}}
+    with_items:
+      - { tar: 'E5-APP.tgz', d: '/' }
+      - { tar: 'cobol.tgz', d: '/' }
+      - { tar: 'oracle-client.tgz', d: '/' }
+      - { tar: 'home.tgz', d: '/' }
+      - { tar: 'jdk7.tar.gz', d: '/usr/java' }
+      - { tar: 'jdk8.tar.gz', d: '/usr/java' }
+    tags: extract
+
+  - name: create java links
+    shell: rm -f /usr/java/java{{item}} ; ln -s /usr/java/jdk1.{{item}}* /usr/java/java{{item}}
+    with_items:
+      - 7
+      - 8
+    tags: java_links
+
+
+  - name: fix ownerships
+    shell: chown -R {{ item.owner }}:{{item.group}} {{item.path}}
+    with_items:
+      - { path: '/e5/', owner: 'e5fs', group: 'e5' }
+
+
+  - name: install prereq packages
+    action: yum 
+      state=installed 
+      name={{item}}
+    tags:
+      - e5_packages
+    with_items:
+      - elfutils-libelf-devel.i686
+      - elfutils-libelf-devel
+      - gcc
+      - xorg-x11-xauth
+      - nfs-utils
+      - xorg-x11-xinit
+      - xeyes
+      - libXtst
+      - ksh
+      - samba
+      - cups
+      - vsftpd
+      - httpd
+      - java-1.7.0
+      - glibc-common.x86_64
+      - glibc.x86_64
+      - glibc-devel.x86_64
+      - glibc-headers
+      - glibc-utils
+      - glibc.i686
+      - glibc-devel
+      - libgcc.x86_64
+      - libstdc++.x86_64
+      - libstdc++-devel.x86_64
+      - libstdc++-docs.x86_64
+      - libstdc++.i686
+      - libstdc++-devel.i686
+      - gdbm.x86_64
+      - glibc-devel.x86_64
+      - glibc-devel.i686
+      - compat-libcap1.x86_64
+      
+      

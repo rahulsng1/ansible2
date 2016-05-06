@@ -1,0 +1,16 @@
+---
+- hosts: EFINAPP
+  gather_facts: yes
+
+  roles:
+    - EFIN-APP
+
+- hosts: EFINDB
+  gather_facts: yes
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  roles:
+    - EFIN-DB
+

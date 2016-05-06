@@ -1,0 +1,78 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: install dependencies
+    action: yum 
+      name={{item}} 
+      state=present
+    tags: evault
+    with_items:
+      - libstdc++
+      - libacl
+
+  - name: install evault account
+    action: user                
+      name=evault 
+      group=root 
+      comment="EVAULT BACKUP AGENT ACCOUNT" 
+      state=present 
+      update_password=on_create
+      password="$6$wiXHj71A$QEJZt6xOuB2fT3C30.F7xX87xWySC/TRZk6MEiBQ9hrQ41WosX4d1QsigUBGhRxP0jiJHpxRPI43VirE1gMa30"
+    tags: evault
+
+  - name: unpack evault agent
+    action: unarchive 
+      copy=yes 
+      src=/local/ansible_files/{{role_path|basename}}/evault-7.21.tgz 
+      dest=/ 
+      group=root 
+      owner=root
+    tags: evault
+
+  - name: push files up
+    action: copy 
+      src="/local/ansible_files/{{role_path|basename}}/{{ item.s }}"
+      dest={{ item.d }}
+      group=root 
+      owner=root        
+      mode=755
+    with_items: "{{files}}"
+    tags: 
+      - evault
+      - evault-files
+
+  - name: reload systemd
+    action: command systemctl daemon-reload
+    when: ansible_distribution_major_version > "6"
+
+  - name: start service
+    action: service 
+      name=vvagent 
+      state=restarted 
+      enabled=yes
+    tags: evault
+
+  - name: start firewalld so rule gets in
+    action: service
+      name=firewalld
+      state=started
+    when: ansible_distribution_major_version > "6"
+    tags:
+     - evault
+     - evault-fire
+
+  - name: evault firewall on RHEL7+
+    action: firewalld 
+      permanent=yes 
+      port=48000-48020/tcp 
+      state=enabled 
+      immediate=yes
+    when: ansible_distribution_major_version > "6"
+    tags:
+     - evault
+     - evault-fire
+
+
+
+

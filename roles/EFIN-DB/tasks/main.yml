@@ -1,0 +1,10 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - include: EFIN-DB.yml
+    when: "{{done_EFIN_DB|default(0)}} < 1"
+    tags: EFINDB
+
+
+

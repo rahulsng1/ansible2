@@ -1,0 +1,8 @@
+---
+  - hosts: all
+    gather_facts: yes
+    roles:
+      - zabbix-remove-agents
+      - { role: zabbix, up_cache: "yes" }
+
+

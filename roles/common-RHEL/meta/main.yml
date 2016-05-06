@@ -1,0 +1,6 @@
+---
+dependencies:
+  - role: setup-yum
+  - role: common-packages
+  - role: exim
+  - role: vmware-tools

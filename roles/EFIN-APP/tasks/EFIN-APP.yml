@@ -1,0 +1,90 @@
+---
+
+  - name: Setup users groups
+    group: name={{item.key}} state=present
+    with_dict: "{{grps}}"
+
+  - name: add user
+    user: name={{ item.value.name }} state=present group={{item.value.group}} append=yes password={{item.value.password}} uid={{item.value.uid}} comment="{{item.value.comment}}"  
+    with_dict: "{{users}}"
+    ignore_errors: yes
+
+  - name: push EFIN
+    action: unarchive
+      src={{item}}
+      dest=/
+    with_fileglob: "/local/ansible_files/{{role_path|basename}}/{{ansible_distribution_major_version}}/*"
+    tags:
+      - efin-unpack
+
+  - name: fix ownerships
+    shell: mkdir -p {{item.path}} ; chown -R {{ item.owner }}:{{item.group}} {{item.path}}
+    with_items:
+      - { path: '/cedar/', owner: 'efin', group: 'efin' }
+      - { path: '/cedar/oracle', owner: 'oracle', group: 'dba' }
+      - { path: '/cedar/java', owner: 'oracle', group: 'dba' }
+    tags:
+      - efin-chown
+
+# Update libstdc++.x86_64 package to avoid multilib version problems in next step    
+  - name: update libstdc++.x86_64 package
+    action: yum
+      state=latest
+      name=libstdc++.x86_64
+    tags:
+      - efin_packages
+    when: ansible_distribution_major_version > "6" and ansible_distribution | lower  == 'redhat'
+
+# Install required packages for EFIN version 5
+  - name: install prereq packages
+    action: yum
+      state=installed
+      name={{item}}
+      enablerepo=rhel-7-server-optional-rpms
+    tags:
+      - efin_packages
+    with_items:
+      - compat-libcap1.x86_64
+      - compat-libstdc++-33.x86_64
+      - compat-libstdc++-33.i686
+      - libaio.x86_64
+      - libaio-devel.x86_64
+      - libgcc.x86_64
+      - libstdc++.i686
+      - libXtst.x86_64
+      - libXtst.i686
+      - ksh.x86_64
+      - sysstat.x86_64
+      - numactl.x86_64
+      - numactl-devel.x86_64
+      - cups.x86_64
+      - vsftpd.x86_64
+      - motif.x86_64
+      - motif-devel.x86_64
+    when: ansible_distribution_major_version > "6" and ansible_distribution | lower  == 'redhat'
+
+  - name: set oracle file limits
+    action: lineinfile
+      line=" {{item.user}} {{item.type}} {{item.parameter}} {{item.value}}"
+      dest=/etc/security/limits.conf
+      regexp="^\W*{{item.user}}\W*{{item.type}}\W*{{item.parameter}}\W*{{item.value}}"
+      state=present
+      backup=yes
+    with_items:
+      - { user: "oracle", 
+          type: "soft", 
+          parameter: "nofile", 
+          value: "4096" }
+      - { user: "oracle", 
+          type: "hard", 
+          parameter: "nofile", 
+          value: "65536" }
+      - { user: "oracle", 
+          type: "soft", 
+          parameter: "nproc", 
+          value: "2047" }
+      - { user: "oracle", 
+          type: "hard", 
+          parameter: "nproc", 
+          value: "16384" }
+    when: ansible_distribution_major_version  > '6' and  ansible_os_family | lower  == 'redhat'

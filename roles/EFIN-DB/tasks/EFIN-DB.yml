@@ -1,0 +1,25 @@
+---
+  - name: unpack EFIN DATABASE SEED
+    action: unarchive
+      src="/local/ansible_files/{{role_path|basename}}/EFINDB-u01.tar.gz" 
+      copy=yes 
+      dest=/ 
+      owner=oracle 
+      group=oinstall
+
+  - name: unpack EFIN DATABASE SEED
+    action: copy 
+      src=oratab 
+      dest=/etc/oratab 
+      owner=oracle 
+      group=oinstall
+
+  - name: enable oracle service
+    action: service
+      enabled=yes 
+      state=started 
+      name=dbora
+
+    # hooks to stop multiple runs on the role across plays
+  - set_fact: done_EFIN_DB=1
+  - debug: msg="done_EFIN_DB {{ora_pre_done}}

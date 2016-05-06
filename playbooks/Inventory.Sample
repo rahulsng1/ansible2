@@ -1,0 +1,17 @@
+# to use this run
+# ansible-playbook /usr/local/ansible/playbooks/deploy_customer.yml -i <your version of this file> -Kks -u ansible
+
+[E5APP]
+
+[E5DB]
+
+[EFINDB]
+
+[EFINAPP]
+
+
+[plain]
+# put ips of plain centos/RHEL/OL boxes in here
+
+[ORACLE]
+# stick generic oracle box ips in here

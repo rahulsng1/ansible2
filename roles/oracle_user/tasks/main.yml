@@ -1,0 +1,39 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: add oracle groups
+    action: group
+      name={{item.value.name}} 
+      gid={{item.value.gid}}
+    with_dict: "{{grps}}"
+    ignore_errors: yes
+    tags: 
+      - oracle_user
+
+  - name: add oracle user
+    action: user
+      name=oracle 
+      group=oinstall 
+      uid=1521 
+      state=present 
+      comment="ORACLE SYSTEM ACCOUNT" 
+      password="$6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE." 
+      groups=dba,oracle,ssh_access
+      append=yes
+    tags: 
+      - oracle_user
+
+  - name: Create ~/.ssh
+    action: file
+      path=/home/oracle/.ssh
+      owner=oracle
+      group=oracle
+      mode=700
+      state=directory
+
+      
+
+
+
+

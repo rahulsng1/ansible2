@@ -1,0 +1,45 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: Push sshd config
+    action: template
+      dest=/etc/ssh/sshd_config 
+      src=sshd_config 
+      group=root 
+      owner=root 
+      mode=600
+
+  - name: Push ssh Prestart script
+    action: copy
+      src={{item.s}}
+      dest={{item.d}}
+      mode=755
+      owner=root
+      group=root
+    with_items:
+      - { s: 'prestart.sh', 
+          d: '/etc/init.d/ssh-prestart' }
+      - { s: 'sshd', 
+          d: '/etc/sysconfig/sshd' }
+
+  - name: add ssh_allow group
+    action: group 
+      name=ssh_access 
+      system=yes 
+      state=present
+
+  - name: restart ssh
+    action: service
+      name={{item}}
+      state=restarted 
+      enabled=yes
+    with_items:
+      - ssh-prestart
+      - sshd
+
+  - name: remove kicky enviroment
+    action: file
+      name=/etc/sysconfig/sshd
+      state=absent
+

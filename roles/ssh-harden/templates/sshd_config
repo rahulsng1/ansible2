@@ -1,0 +1,64 @@
+Protocol 2
+Port 22
+
+ListenAddress 0.0.0.0
+
+
+ServerKeyBits 2048
+
+
+PermitRootLogin no
+StrictModes yes
+MaxAuthTries 6
+#MaxSessions 32
+
+PubkeyAuthentication yes
+
+AuthorizedKeysFile	.ssh/authorized_keys
+
+RhostsRSAAuthentication no
+HostbasedAuthentication no
+IgnoreUserKnownHosts no
+IgnoreRhosts yes
+
+
+PermitEmptyPasswords no
+PasswordAuthentication yes
+
+ChallengeResponseAuthentication no
+
+GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
+
+#UsePAM yes
+UseDNS no
+
+
+{% if ansible_distribution_major_version > "6" %}
+ Ciphers aes256-ctr,aes192-ctr,aes128-ctr,arcfour256,arcfour128,arcfour
+ KexAlgorithms diffie-hellman-group-exchange-sha256
+ MACs hmac-sha2-512,hmac-sha2-256,hmac-ripemd160
+{% endif %}
+
+
+
+
+#AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts no
+X11Forwarding yes
+X11DisplayOffset 10
+X11UseLocalhost yes
+PrintMotd yes
+PrintLastLog yes
+TCPKeepAlive yes
+
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+AcceptEnv XMODIFIERS
+
+AllowGroups ssh_access uts e5_admin efin_admin jasper_admin v1_admin cp_admin networks dba
+
+Subsystem       sftp    /usr/libexec/openssh/sftp-server
+

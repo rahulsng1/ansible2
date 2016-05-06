@@ -1,0 +1,9 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+- include: prepare.yml
+
+- include: server.yml
+
+- include: web.yml

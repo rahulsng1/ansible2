@@ -1,0 +1,20 @@
+---
+  grps:
+    oracle:
+      name: oracle
+      gid: 1522
+
+    oinstall:
+      name: oinstall
+      gid: 1521
+
+    dba:
+      name: dba
+      gid: 1523
+    
+    ssh_access:
+      name: ssh_access
+      gid: 10000
+
+
+

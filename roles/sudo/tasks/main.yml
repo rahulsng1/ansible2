@@ -1,0 +1,21 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: sudo checks - dir
+    action: file path=/etc/sudoers.d state=directory owner=root mode=0755
+    tags: uusers
+  
+  - name: sudo checks - include
+    action: lineinfile dest=/etc/sudoers regexp="#includedir /etc/sudoers.d" line="#includedir /etc/sudoers.d" state=present create=yes
+    tags: uusers
+  
+  - name: sudo checks - uts
+    template: dest=/etc/sudoers.d/{{item}} src=sudo mode=0440
+    with_items:
+      - uts
+      - utsb
+      - ansible
+    tags: uusers
+  
+

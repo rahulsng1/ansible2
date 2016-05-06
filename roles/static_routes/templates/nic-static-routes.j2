@@ -1,0 +1,10 @@
+{% set count = 0 %}
+{% for route in nic_static_routes %}
+{% if item == route.ni %}
+NETMASK{{count}}={{route.nm}}
+ADDRESS{{count}}={{route.ad}}
+GATEWAY{{count}}={{route.gw}}
+
+{% set count = count + 1 %}
+{% endif %}
+{% endfor %}

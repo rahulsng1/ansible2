@@ -1,0 +1,60 @@
+---
+
+- hosts: all
+  tasks:
+    - group_by:
+          key={{ ansible_distribution_major_version }}
+
+
+
+
+
+- hosts: "6:7"
+  gather_facts: yes
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  roles:
+    - setup-yum
+  tasks:
+    - name: get rid od cd.repo
+      shell: "rm -v /etc/yum.repos.d/cd.repo || true"
+      ignore_errors: yes
+    - name: install haveng
+      action: yum
+        name=haveged 
+        state=latest
+
+- hosts: "3:4:5"
+  gather_facts: no
+  tasks:
+    - name: push tartball
+      action: unarchive
+        src=haveged-1.9.1.tar.gz
+        dest=/var/tmp/
+
+    - name: config it
+      command: ./configure --enable-init=sysv.redhat --prefix=/
+        chdir="/var/tmp/haveged-1.9.1"
+
+    - name: compile it
+      command: make
+        chdir="/var/tmp/haveged-1.9.1"
+
+    - name: install it
+      command: make install
+        chdir="/var/tmp/haveged-1.9.1"
+
+
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: start it
+      action: service
+        name=haveged
+        state=started
+        enabled=yes
+      tags:
+        - start
+

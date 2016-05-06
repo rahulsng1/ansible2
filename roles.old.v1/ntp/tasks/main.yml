@@ -1,0 +1,135 @@
+---
+  - debug: msg="start of {{role_path|basename}} role"
+    tags: always
+
+  - name: fix anoying RH proxy rubbish
+    action: lineinfile 
+      dest=/etc/yum.conf 
+      regexp='^proxy=' 
+      line='proxy=http://127.0.0.1:{{proxy}}' 
+      state=present
+    when:  ansible_os_family | lower  == "redhat"
+    tags:       
+      - ntp
+
+  - name: install ntpd
+    environment:
+      http_proxy: http://127.0.0.1:{{proxy}}
+    action: yum
+      name=ntp 
+      state=installed
+    when: ansible_os_family | lower  == "redhat"
+    tags:       
+      - ntp
+
+
+  - name: Put entry in hosts
+    action: lineinfile 
+      dest=/etc/hosts regexp='^192.168.253.5 ntp' 
+      line='192.168.253.5 ntp'
+    tags:       
+      - ntp
+
+  - name: get gateways  
+    shell: netstat -rn | awk '$2 ~ /^[1-9]/ {print $2}' | sort -u
+    register: gate
+    tags:       
+      - ntp
+
+  - name: Find ntp.conf 
+    shell: find /etc/ -type f -name ntp.conf
+    register: ntp_loc
+    tags:       
+      - ntp
+
+  - name: Clean raw ip MGMT box in ntp.conf  pt1
+    action: lineinfile 
+      dest={{ntp_loc.stdout}} 
+      regexp='^server 192.168.253.5'  
+      state=absent 
+      create=yes
+    ignore_errors: yes
+    tags:       
+      - ntp
+  
+  - name: Clean raw ip MGMT box in ntp.conf  pt2
+    action: lineinfile 
+      dest={{ntp_loc.stdout}} 
+      regexp='^restrict 192.168.253.5' 
+      state=absent
+    ignore_errors: yes
+    tags:       
+      - ntp
+ 
+  - name: PUT hosts in ntp.conf t1
+    action: lineinfile 
+      dest={{ntp_loc.stdout}}  
+      regexp='^restrict {{ item }}' 
+      line='restrict {{ item }}'
+    with_flattened: 
+      - gate.stdout_lines
+      - 192.168.253.5
+    tags:       
+      - ntp
+
+  - name: PUT hosts in in ntp.conf  pt2
+    action: lineinfile 
+      dest={{ntp_loc.stdout}}  
+      regexp='^server {{item}}' 
+      line='server {{item}}' 
+      create=yes
+    with_flattened: 
+      - gate.stdout_lines
+      - 192.168.253.5
+    tags:       
+      - ntp
+
+  - name: stop ntp service
+    action: service 
+      name=ntpd 
+      state=stopped
+    ignore_errors: yes
+    when: ansible_os_family | lower  == "redhat"
+    tags:       
+      - ntp
+  
+  - name: stop ntp service
+    action: service 
+      name=ntpd 
+      state=stopped
+    ignore_errors: yes
+    when: ansible_os_family | lower  == "debian"
+    tags:       
+      - ntp
+  
+  - name: do the ntpdate bit
+    shell: /usr/sbin/ntpdate {{item}}
+    with_flattened: 
+      - gate.stdout_lines
+      - 192.168.253.5
+    ignore_errors: yes
+    tags:       
+      - ntp
+
+  - name: restart ntp service
+    action: service 
+      name=ntpd 
+      state=restarted 
+      enabled=yes
+    ignore_errors: yes
+    when: ansible_os_family | lower  == "redhat"
+    tags:       
+      - ntp
+  
+  - name: restart ntp service
+    action: service 
+      name=ntpd 
+      state=restarted 
+      enabled=yes
+    ignore_errors: yes
+    when: ansible_os_family | lower  == "debian"
+    tags:       
+      - ntp
+
+
+

@@ -1,0 +1,63 @@
+---
+- hosts: all
+  vars:
+    - grps:
+        efin:
+        oracle:
+    - users:
+        efin:
+          comment: efin
+          group: efin
+          name: efin
+          password: $6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE.
+          uid: 511
+          gid: 516
+        oracle:
+         comment: oracle
+         group: oracle
+         name: oracle
+         password: $6$pJ7MdBa5$WMvEYF7GrH27hJRacM9j2NmQedNH05MT0.S0GMv4iSPk.T8CCH2YVObz3bFkE8rCs.EvlD8fELcOgk.bFSsLE.
+         uid: 510
+         gid: 505
+    - lvs:
+        cedar:
+          vg: t1
+          lv: cedar
+          size: +100%FREE
+          mount: /cedar
+          fs: ext3
+          opts: noatime
+
+  tasks:
+
+  - name: create LVs
+    lvol: vg={{ item.value.vg }} lv={{ item.value.lv }} size={{ item.value.size }} state=present 
+    with_dict: lvs
+
+  - name: create file systems
+    filesystem: fstype={{ item.value.fs }} dev="/dev/{{ item.value.vg }}/{{ item.value.lv }}"
+    with_dict: lvs
+
+  - group_by: key={{ansible_system}}
+  - debug: "msg=/dev/{{ item.value.vg }}/{{ item.value.lv }}  "
+    with_dict: lvs
+
+
+  - name: mount file systems
+    filesystem: fstype={{ item.value.fs }} dev="/dev/{{ item.value.vg }}/{{ item.value.lv }}" 
+    with_dict: lvs
+
+  - name: mount file systems
+    mount: fstype={{ item.value.fs }} src="/dev/{{ item.value.vg }}/{{ item.value.lv }}" state=mounted opts={{ item.value.opts }} name={{ item.value.mount }}
+    with_dict: lvs
+
+  - name: Setup users groups
+    action: group name={{item.key}} state=present
+    with_dict: grps
+
+  - name: add user
+    action: user name={{ item.value.name }} state=present group={{item.value.group}} append=yes password={{item.value.password}} uid={{item.value.uid}} comment="{{item.value.comment}}"  
+    with_dict: users
+    ignore_errors: yes
+
+

@@ -1,0 +1,17 @@
+[ol_latest]
+name=Oracle Linux $releasever Latest ($basearch)
+baseurl=http://public-yum.oracle.com/repo/OracleLinux/OL{{ansible_distribution_major_version}}/latest/$basearch/
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+gpgcheck=1
+enabled=0
+
+
+[ol_UEKR3]
+name=Latest Unbreakable Enterprise Kernel Release 3 for Oracle Linux $releasever ($basearch)
+#baseurl=http://public-yum.oracle.com/repo/OracleLinux/OL{{ansible_distribution_major_version}}/latest/$basearch/
+baseurl=http://yum.oracle.com/repo/OracleLinux/OL{{ansible_distribution_major_version}}/UEKR4/$basearch/
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+gpgcheck=1
+enabled=0
+
+

@@ -1,0 +1,5 @@
+---
+# handlers file for kostyrevaa.static-routes
+- name: restart network
+  service: name=network state=restarted
+#  when: network_allow_service_restart

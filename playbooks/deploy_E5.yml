@@ -1,0 +1,21 @@
+---
+
+- hosts: E5DB
+  gather_facts: yes
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  roles:
+    - E5-DB
+
+- hosts: E5APP
+  gather_facts: yes
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  roles:
+    - E5-APP
+
+

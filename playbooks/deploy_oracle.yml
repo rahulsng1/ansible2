@@ -1,0 +1,6 @@
+---
+- hosts: Oracle
+  gather_facts: yes
+  roles:
+    - ora_pre
+

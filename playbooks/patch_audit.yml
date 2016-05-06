@@ -1,0 +1,107 @@
+---
+- hosts: LCY:DNS:WAN:SSS:NI:ECC:DON:MFR:RFH:A365:DEV:TEES
+  gather_facts: yes
+  tasks:
+    - name: push proxy file
+      action: copy 
+        src='~/.proxy_env' 
+        dest='/tmp/.pr_proxy_env'
+
+    - group_by:
+          key: "{{ ansible_distribution | lower }}"
+
+
+
+- hosts: redhat
+  sudo: yes
+  gather_facts: no
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  tasks:
+    - name: fix RHEL for the proxy
+      action: lineinfile
+        dest=/etc/sysconfig/rhn/up2date
+        regexp={{item.r}}
+        line={{item.l}}
+      with_items:
+        - { r: '^httpProxy=', l: 'httpProxy=http://127.0.0.1:{{proxy}}' }
+        - { r: '^enableProxy=', l: 'enableProxy=1' }
+
+    - name: fix dodgy serverURL line
+      action: lineinfile regexp="^(serverURL=.*)" line="#\1" dest=/etc/sysconfig/rhn/up2date state=present backrefs=yes
+      when: ansible_distribution | lower == 'redhat'
+      tags:
+        - proxy
+        - rhn_reg
+        - rhn_url
+
+
+    - name: make sure we are Registered/subscribed
+      action: rhn_register
+        state=present
+        username=webabacus-webap-01
+        password=h0lycr4p!
+      environment:
+        http_proxy: http://127.0.0.1:{{proxy}}
+
+    - name: check patches
+      shell: . /tmp/.pr_proxy_env ; yum --disablerepo=* --enablerepo='rhel*server*'   check-update > /tmp/.patch.run
+      register: command_result_rh
+      ignore_errors: yes
+      # yum exit codes are 0 for no patches, and 100 for patches available
+      # both of these are good responces so we dont wnat to fail
+      # anything else we do need to, the below is needed to stop the playbook
+      # bombing on the 100 exit code as normally > 0 means some kind of failure
+      failed_when: command_result_rh.rc != 100 and command_result_rh.rc != 0
+
+
+
+- hosts: centos
+  sudo: yes
+  gather_facts: no
+  vars:
+    os_type: RedHat
+    proxy: "{{ lookup('env','ANS_PROXY') }}"
+    rs: "{{ lookup('env','RSYNC_PROXY') }}"
+  tasks:
+    - name: fix Centos for the proxy
+      action: lineinfile
+        dest=/etc/yum.conf 
+        regexp="^proxy=.*" 
+        line=proxy=http://127.0.0.1:{{ proxy }} 
+        backup=yes
+
+    - name: check patches Centos
+      shell: . /tmp/.pr_proxy_env ; yum --disablerepo=* --enablerepo='base' --enablerepo='updates'  check-update > /tmp/.patch.run
+      register: command_result
+      ignore_errors: yes
+      failed_when: command_result.rc != 100 and command_result.rc != 0
+
+
+- hosts: LCY:DNS:WAN:SSS:NI:ECC:DON:MFR:RFH:A365:DEV:TEES
+  gather_facts: no
+  tasks:
+    - name: Create data dir
+      local_action: shell mkdir -pv /tmp/.patchrun/ ; chmod 777 /tmp/.patchrun/
+      run_once: true
+  
+    - name: Get patch files
+      action: fetch
+        dest=/tmp/.patchrun/{{ansible_hostname}}
+        src=/tmp/.patch.run
+        validate_checksum=yes
+        flat=yes
+        
+    - name: remove old tar
+      local_action: shell rm -f /tmp/patchball.tgz
+      args:
+        removes: /tmp/patchball.tgz
+      run_once: true
+  
+    - name: generate tarball
+      local_action: shell tar czf ../patchball.tgz *
+      args:
+        chdir: /tmp/.patchrun/
+      run_once: true

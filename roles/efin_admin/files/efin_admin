@@ -1,0 +1,1 @@
+%efin_admin ALL=(root) /bin/su - efin,/bin/su - oracle,/bin/su - prod,/bin/su - test,/bin/su - devl,/bin/su - trng
