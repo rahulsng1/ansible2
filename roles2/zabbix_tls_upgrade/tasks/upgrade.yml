@@ -8,13 +8,13 @@
 - name: push files
   action: template
     src={{item.s}} 
-    dest={{item.d}}
+    dest="{{include_dir}}{{item.d}}"
     owner=zabbix 
     group=zabbix 
     mode=600
   with_items:
-    - {s : "psk", d : "/etc/zabbix/zabbix_agentd.psk" }
-    - {s : "tls.conf", d : "/etc/zabbix/agentd.conf.d/tls.conf"}
+    - {s : "psk", d : "../zabbix_agentd.psk" }
+    - {s : "tls.conf", d : "tls.conf"}
   when: ansible_distribution_major_version > "5"
   notify: restart_agent
 
