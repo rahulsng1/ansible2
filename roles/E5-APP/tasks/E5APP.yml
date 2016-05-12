@@ -91,5 +91,12 @@
       - glibc-devel.x86_64
       - glibc-devel.i686
       - compat-libcap1.x86_64
+      - wkhtmltopdf
+      - enscript
+      - pdfjam
+
+
+
+
       
       
