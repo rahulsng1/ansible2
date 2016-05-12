@@ -4,5 +4,4 @@
   tags: set_hostname
 
 
-- set_fact: done_set_hostname=1
 

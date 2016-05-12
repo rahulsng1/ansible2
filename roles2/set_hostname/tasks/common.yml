@@ -20,7 +20,7 @@
   ignore_errors: True
 
 - include: linux.yml  
-  when: "hn is defined and hn.rc == 0 and {{ansible_system}} | lower == 'redhat'"
+  when: "hn is defined and hn.rc == 0 and {{ansible_system}} | lower == 'linux'"
 
   
 

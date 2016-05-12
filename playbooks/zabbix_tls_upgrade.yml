@@ -1,0 +1,12 @@
+---
+
+- hosts: "{{group_name}}"
+  gather_facts: yes
+  vars_prompt:
+    - name: "group_name"
+      prompt: "Enter group name"
+  roles:
+    - zabbix_tls_upgrade
+
+
+
