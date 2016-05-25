@@ -39,6 +39,16 @@
       - { tar: 'jdk8.tar.gz', d: '/usr/java' }
     tags: extract
 
+  - name: Push limits config
+    action: copy
+      src="/local/ansible_files/{{role_path|basename}}/limits/E5.conf"
+      dest="/etc/security/limits.d/E5.conf"
+      owner=root
+      group=root
+      mode=600
+    tags: extract
+
+
   - name: create java links
     shell: rm -f /usr/java/java{{item}} ; ln -s /usr/java/jdk1.{{item}}* /usr/java/java{{item}}
     with_items:

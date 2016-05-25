@@ -9,8 +9,6 @@
 # Provides: ssh-prestart
 # Required-Start: $local_fs $network
 # Required-Stop: $local_fs $network
-# Should-Start: ssh-prestart
-# Should-Stop: ssh-prestart
 # X-Start-Before: sshd
 # Default-Start: 2 3 5
 # Default-Stop: 0 1 6
