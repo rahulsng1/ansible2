@@ -1,11 +1,22 @@
 ---
+  - name: create template dir
+    action: file
+      dest=/u02/templates
+      state=directory
+      mode=755
+      owner=oracle
+      group=oinstall
+
+  
   - name: unpack EFIN DATABASE SEED
-    action: unarchive
-      src="/local/ansible_files/{{role_path|basename}}/EFINDB-u01.tar.gz" 
+    action: copy
+      src="{{item}}"
       copy=yes 
-      dest=/ 
+      dest=/u02/templates
       owner=oracle 
       group=oinstall
+      mode=644
+    with_fileglob: "/local/ansible_files/{{role_path|basename}}/templates/*"
 
   - name: unpack EFIN DATABASE SEED
     action: copy 
