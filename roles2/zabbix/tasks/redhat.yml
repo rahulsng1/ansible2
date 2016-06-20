@@ -9,6 +9,7 @@
   - name: bouuf
     shell: "{{sub_comm}}"
     when: ansible_distribution | lower == "redhat"
+    ignore_errors: yes
 
   - name: Add repo keys
     action: copy 

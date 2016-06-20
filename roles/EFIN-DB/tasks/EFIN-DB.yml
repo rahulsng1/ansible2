@@ -33,4 +33,4 @@
 
     # hooks to stop multiple runs on the role across plays
   - set_fact: done_EFIN_DB=1
-  - debug: msg="done_EFIN_DB {{ora_pre_done}}
+  - debug: msg="done_EFIN_DB {{ora_pre_done}}"

@@ -98,7 +98,7 @@
       dest=/u02/software 
       owner=oracle 
       group=oracle
-    with_fileglob: ""/local/ansible_files/{{role_path|basename}}/oracle/{{ansible_distribution_major_version}}/*"
+    with_fileglob: "/local/ansible_files/{{role_path|basename}}/oracle/{{ansible_distribution_major_version}}/*"
     tags: 
       - ora-dump
 

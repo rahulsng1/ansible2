@@ -7,7 +7,7 @@
   - name: unpack nimsoft agent
     action: unarchive 
       copy=yes 
-      src=/local/ansible_files/{{role_path|basename}}/nim.tgz 
+      src=/local/ansible_files/{{role_path|basename}}/nim.tar.gz 
       dest=/ 
       group=root 
       owner=root
