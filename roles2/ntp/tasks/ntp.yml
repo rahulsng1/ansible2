@@ -1,11 +1,13 @@
 ---
 
-  - name: install ntpd
+  - name: install ntpd ll
     action:  package
       name="{{item}}"
       state=installed
-    with_items: "{{packages}}"
-
+    with_items: 
+      - ntp
+      - ntpdate
+    ignore_errors: yes
   
   - name: Put entry in hosts
     action: lineinfile 

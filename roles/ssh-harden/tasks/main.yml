@@ -39,7 +39,5 @@
       - sshd
 
   - name: remove kicky enviroment
-    action: file
-      name=/etc/sysconfig/sshd
-      state=absent
+    shell: echo /dev/null > /etc/sysconfig/sshd
 

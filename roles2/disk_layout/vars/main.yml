@@ -1,4 +1,5 @@
 ---
+  lvs:  {}
   oracle_disk:
     u01:
       vg: t1
