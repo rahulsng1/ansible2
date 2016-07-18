@@ -5,7 +5,7 @@
       lv: oracle
       size: +100%FREE
       mount: /u01
-      fs: ext4
+      fs: ext3
       opts: noatime
       owner: oracle
       group: oinstall
@@ -16,7 +16,7 @@
       lv: oracle
       size: +100%FREE
       mount: /u02
-      fs: ext4
+      fs: ext3
       opts: noatime
       owner: oracle
       group: oinstall
@@ -27,7 +27,7 @@
       lv: oracle
       size: +100%FREE
       mount: /u03
-      fs: ext4
+      fs: ext3
       opts: noatime
       owner: oracle
       group: oinstall
@@ -40,6 +40,6 @@
       lv: tmp
       size: 8192
       create: no
-      fs: ext4
+      fs: ext3
 
 
