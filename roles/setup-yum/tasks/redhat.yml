@@ -1,27 +1,5 @@
 ---
 
-#  - name: fix rhn proxy
-#    action: lineinfile 
-#      regexp="^httpProxy=http://127.0.0.1:{{proxy}}" 
-#      line="httpProxy=http://127.0.0.1:{{proxy}}" 
-#      dest=/etc/sysconfig/rhn/up2date 
-#      state=present
-#    when: ansible_distribution | lower == 'redhat'
-#    tags:
-#      - proxy
-#      - rhn_reg
-#
-#  - name: turn on rhn proxy
-#    action: lineinfile 
-#      regexp="^enableProxy=0" 
-#      line="enableProxy=1" 
-#      dest=/etc/sysconfig/rhn/up2date 
-#      state=present
-#    when: ansible_distribution | lower == 'redhat'
-#    tags:
-#      - proxy
-#      - rhn_reg
-#
   - name: turn on proxy
     shell: "{{sub_comm}}"
     tags: rhn_prox

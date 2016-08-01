@@ -17,6 +17,15 @@
         owner=root
         group=root
       ignore_errors: True
+
+    - name: create arch dir
+      action: file
+        state=directory
+        path=/etc/lvm/backup/arch
+        mode=755
+        owner=root
+        group=root
+
   
     - name: backup LVM config
       action:  shell "{{ vgcfgbackup.stdout }}"

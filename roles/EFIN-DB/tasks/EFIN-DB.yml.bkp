@@ -11,6 +11,7 @@
   - name: unpack EFIN DATABASE SEED
     action: copy
       src="{{item}}"
+#      copy=yes 
       dest=/u02/templates
       owner=oracle 
       group=oinstall

@@ -12,6 +12,7 @@ dependencies:
   - role: remove_rh_gui
     when: ansible_os_family | lower == 'redhat' 
   - role: disable_services
+  - role: lvm-backup
   - role: ntp
   - role: syslog
   - role: nimsoft

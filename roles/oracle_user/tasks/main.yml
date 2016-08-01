@@ -32,7 +32,11 @@
       mode=700
       state=directory
 
-      
+  - name: Sort out oracle accounts mail
+    action: lineinfile line={{alias}} regexp='^oracle:' backup=yes dest=/etc/aliases
+    notify: aliases_update
+
+
 
 
 

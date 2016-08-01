@@ -1,4 +1,5 @@
 ---
+  alias: "oracle: OracleDBA@oneadvanced.com"
   grps:
     oracle:
       name: oracle

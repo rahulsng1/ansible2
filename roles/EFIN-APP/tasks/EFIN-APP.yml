@@ -47,6 +47,7 @@
       - compat-libcap1.x86_64
       - compat-libstdc++-33.x86_64
       - compat-libstdc++-33.i686
+      - dos2unix.x86_64
       - libaio.x86_64
       - libaio-devel.x86_64
       - libgcc.x86_64
