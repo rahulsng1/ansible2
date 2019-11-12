@@ -1,0 +1,11 @@
+---
+
+#- include: deploy_Group_munging.yml
+#- include: deploy_common.yml
+#- include: deploy_vmware-tools.yml
+- include: deploy_E5.yml
+- include: deploy_EFIN.yml
+- include: deploy_EFIN55.yml
+- include: deploy_ORACLE.yml
+#- include: patch_all.yml
+- include: harden_ssh.yml
